@@ -23,6 +23,12 @@ class RequestsTable extends Component {
       filteredInfo: filters,
       sortedInfo: sorter,
     });
+    filters.product &&
+      this.setState({
+        requests: this.props.requests.filter(
+          (request) => request.product === filters.product[0]
+        ),
+      });
   };
 
   handleSelect = (selectedOption) => {
@@ -98,6 +104,37 @@ class RequestsTable extends Component {
         sorter: (a, b) => a.product.length - b.product.length,
         sortOrder: sortedInfo.columnKey === 'product' && sortedInfo.order,
         ellipsis: true,
+        filters: [
+          {
+            text: 'Pads',
+            value: 'pads',
+          },
+          {
+            text: 'Condoms',
+            value: 'condoms',
+          },
+          {
+            text: 'HIV',
+            value: 'hiv',
+          },
+          {
+            text: 'STI',
+            value: 'sti',
+          },
+          {
+            text: 'Male Puberty',
+            value: 'male_puberty',
+          },
+          {
+            text: 'Violence',
+            value: 'violence',
+          },
+          {
+            text: 'Teenager Pregnancy',
+            value: 'teenager_pregnancy',
+          },
+        ],
+        onFilter: (value, record) => record.product === value,
       },
       {
         title: 'Gender',
@@ -108,12 +145,23 @@ class RequestsTable extends Component {
         title: 'Age',
         dataIndex: 'age',
         key: 'age',
+        sorter: (a, b) => a.age - b.age,
+        sortOrder: sortedInfo.columnKey === 'age' && sortedInfo.order,
+        ellipsis: true,
       },
       {
         title: 'In Kigeme',
         dataIndex: 'inKigeme',
         key: 'inKigeme',
         width: 100,
+      },
+      {
+        title: 'Requested On(Y/M/D)',
+        dataIndex: 'createdOn',
+        key: 'createdOn',
+        sorter: (a, b) => new Date(a.createdOn) - new Date(b.createdOn),
+        sortOrder: sortedInfo.columnKey === 'createdOn' && sortedInfo.order,
+        ellipsis: true,
       },
     ];
 
@@ -167,219 +215,16 @@ class RequestsTable extends Component {
 
 const mapStateToProps = ({ requests }) => {
   return {
-    // requests: Object.values(requests)
-    //   .map((obj, index) => ({
-    //     ...obj,
-    //     key: obj.requestId,
-    //     rowNum: index + 1,
-    //   }))
-    //   .reverse(),
-    // num: Object.values(requests).length,
-    // TODO: Switch back to store data
-    requests: currentRequests
+    requests: Object.values(requests)
       .map((obj, index) => ({
         ...obj,
         key: obj.requestId,
         rowNum: index + 1,
+        createdOn: obj.dateCreated.substr(0, 10),
       }))
       .reverse(),
-    num: currentRequests.length,
+    num: Object.values(requests).length,
   };
 };
 
 export default connect(mapStateToProps)(RequestsTable);
-
-const currentRequests = [
-  {
-    requestId: 1,
-    product: 'pads',
-    gender: 'Male',
-    age: 12,
-    inKigeme: 'yes',
-    lang: 'rw',
-    MSISDN: '',
-    status: 0,
-    dateModified: '2020-10-05T07:41:26.000000Z',
-    dateCreated: '2020-10-05T03:41:26.000000Z',
-  },
-  {
-    requestId: 2,
-    product: 'pads',
-    gender: 'Male',
-    age: 21,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '',
-    status: 0,
-    dateModified: '2020-10-05T07:42:11.000000Z',
-    dateCreated: '2020-10-05T03:42:11.000000Z',
-  },
-  {
-    requestId: 3,
-    product: 'pads',
-    gender: 'Male',
-    age: 12,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '',
-    status: 0,
-    dateModified: '2020-10-05T07:42:51.000000Z',
-    dateCreated: '2020-10-05T03:42:51.000000Z',
-  },
-  {
-    requestId: 4,
-    product: 'condoms',
-    gender: 'Male',
-    age: 21,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '',
-    status: 0,
-    dateModified: '2020-10-05T07:43:55.000000Z',
-    dateCreated: '2020-10-05T03:43:55.000000Z',
-  },
-  {
-    requestId: 5,
-    product: 'pads',
-    gender: 'Male',
-    age: 21,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '+250782980090',
-    status: 0,
-    dateModified: '2020-10-05T07:45:14.000000Z',
-    dateCreated: '2020-10-05T03:45:14.000000Z',
-  },
-  {
-    requestId: 6,
-    product: 'updates',
-    gender: 'Female',
-    age: 21,
-    inKigeme: 'no',
-    lang: 'rw',
-    MSISDN: '+250782980090',
-    status: 0,
-    dateModified: '2020-10-05T07:48:07.000000Z',
-    dateCreated: '2020-10-05T03:48:07.000000Z',
-  },
-  {
-    requestId: 7,
-    product: 'updates',
-    gender: 'Male',
-    age: 21,
-    inKigeme: 'yes',
-    lang: 'rw',
-    MSISDN: '+250782980090',
-    status: 0,
-    dateModified: '2020-10-06T11:04:53.000000Z',
-    dateCreated: '2020-10-06T11:04:53.000000Z',
-  },
-  {
-    requestId: 8,
-    product: 'pads',
-    gender: 'Female',
-    age: 21,
-    inKigeme: 'no',
-    lang: 'rw',
-    MSISDN: '+250782980090',
-    status: 0,
-    dateModified: '2020-10-06T11:05:07.000000Z',
-    dateCreated: '2020-10-06T11:05:07.000000Z',
-  },
-  {
-    requestId: 9,
-    product: 'updates',
-    gender: 'Male',
-    age: 23,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '+250784903167',
-    status: 0,
-    dateModified: '2020-10-07T08:00:01.000000Z',
-    dateCreated: '2020-10-07T08:00:01.000000Z',
-  },
-  {
-    requestId: 10,
-    product: 'updates',
-    gender: 'Female',
-    age: 12,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '+250784903167',
-    status: 0,
-    dateModified: '2020-10-07T08:01:06.000000Z',
-    dateCreated: '2020-10-07T08:01:06.000000Z',
-  },
-  {
-    requestId: 11,
-    product: 'updates',
-    gender: 'Female',
-    age: 19,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '+250784903167',
-    status: 0,
-    dateModified: '2020-10-07T08:09:47.000000Z',
-    dateCreated: '2020-10-07T08:09:47.000000Z',
-  },
-  {
-    requestId: 12,
-    product: 'condoms',
-    gender: 'Male',
-    age: 21,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '+250784903167',
-    status: 0,
-    dateModified: '2020-10-07T08:15:41.000000Z',
-    dateCreated: '2020-10-07T08:15:41.000000Z',
-  },
-  {
-    requestId: 13,
-    product: 'updates',
-    gender: 'Female',
-    age: 26,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '+250784903167',
-    status: 0,
-    dateModified: '2020-10-07T08:18:08.000000Z',
-    dateCreated: '2020-10-07T08:18:08.000000Z',
-  },
-  {
-    requestId: 14,
-    product: 'pads',
-    gender: 'Female',
-    age: 25,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '+250784903167',
-    status: 0,
-    dateModified: '2020-10-07T08:18:51.000000Z',
-    dateCreated: '2020-10-07T08:18:51.000000Z',
-  },
-  {
-    requestId: 15,
-    product: 'updates',
-    gender: 'Female',
-    age: 24,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '+250784903167',
-    status: 0,
-    dateModified: '2020-10-07T08:31:39.000000Z',
-    dateCreated: '2020-10-07T08:31:39.000000Z',
-  },
-  {
-    requestId: 16,
-    product: 'pads',
-    gender: 'Female',
-    age: 23,
-    inKigeme: 'yes',
-    lang: 'en',
-    MSISDN: '+250784903167',
-    status: 0,
-    dateModified: '2020-10-07T08:32:08.000000Z',
-    dateCreated: '2020-10-07T08:32:08.000000Z',
-  },
-];

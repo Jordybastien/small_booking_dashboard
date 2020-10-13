@@ -17,7 +17,7 @@ const MainBoard = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [service, setService] = useState(null);
-  const { authedUser } = props;
+  const { authedUser, dataCount, requestsCount } = props;
 
   return (
     <Fragment>
@@ -41,7 +41,7 @@ const MainBoard = (props) => {
             <div className="overviewcard">
               <div className="overviewcard__icon">
                 <FontAwesomeIcon
-                  icon={faShieldAlt}
+                  icon={faLayerGroup}
                   size="3x"
                   color="#5C4DB1"
                   className="mr-2"
@@ -49,12 +49,28 @@ const MainBoard = (props) => {
               </div>
               <div className="overviewcard__info">
                 <div>
-                  <span className="stats-heading-title">
-                    {/* {authedUser.levelId} */}
-                  </span>
+                  <span className="stats-heading-title">{dataCount}</span>
                 </div>
                 <div>
-                  <span className="stats-heading-label">Level</span>
+                  <span className="stats-heading-label">Data</span>
+                </div>
+              </div>
+            </div>
+            <div className="overviewcard">
+              <div className="overviewcard__icon">
+                <FontAwesomeIcon
+                  icon={faLayerGroup}
+                  size="3x"
+                  color="#5C4DB1"
+                  className="mr-2"
+                />
+              </div>
+              <div className="overviewcard__info">
+                <div>
+                  <span className="stats-heading-title">{requestsCount}</span>
+                </div>
+                <div>
+                  <span className="stats-heading-label">Requests</span>
                 </div>
               </div>
             </div>
@@ -68,9 +84,15 @@ const MainBoard = (props) => {
   );
 };
 
-const mapStateToProps = ({ authedUser }) => {
+const mapStateToProps = ({ authedUser, requests }) => {
   return {
     authedUser,
+    dataCount: Object.values(requests).length,
+    requestsCount: Object.values(requests).filter(
+      (request) =>
+        (request.product === 'pads' || request.product === 'condoms') &&
+        request.status === 0
+    ).length,
   };
 };
 

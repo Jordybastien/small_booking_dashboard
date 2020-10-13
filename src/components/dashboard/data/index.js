@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { Table, Popconfirm, Button } from 'antd';
+import { Table, Button } from 'antd';
 import { connect } from 'react-redux';
 import Select from 'react-select';
 import { exportToCsv, exportPDF } from '../../../utils/fileGenerator';
 import moment from 'moment';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 const options = [
   { value: 'pdf', label: 'PDF' },
@@ -18,7 +16,6 @@ class DataTable extends Component {
     sortedInfo: null,
     requests: this.props.requests,
     selectedOption: null,
-    loading: false,
     minAge: '',
     maxAge: '',
   };
@@ -28,6 +25,7 @@ class DataTable extends Component {
       filteredInfo: filters,
       sortedInfo: sorter,
     });
+
     filters.product &&
       this.setState({
         requests: this.props.requests.filter(
@@ -84,8 +82,6 @@ class DataTable extends Component {
     }
   };
 
-  handleRequest = (request) => {};
-
   handleMin = (e) =>
     !isNaN(e.target.value) && this.setState({ minAge: e.target.value });
 
@@ -102,11 +98,11 @@ class DataTable extends Component {
   };
 
   render() {
-    const { requests, selectedOption } = this.state;
+    const { requests, selectedOption, minAge, maxAge } = this.state;
 
     const { num } = this.props;
 
-    let { sortedInfo, loading, minAge, maxAge } = this.state;
+    let { sortedInfo } = this.state;
     sortedInfo = sortedInfo || {};
 
     const columns = [
@@ -207,33 +203,6 @@ class DataTable extends Component {
         sortOrder: sortedInfo.columnKey === 'createdOn' && sortedInfo.order,
         ellipsis: true,
       },
-      {
-        title: 'Action',
-        key: 'action',
-        render: (text, record) => (
-          <span>
-            <Popconfirm
-              placement="top"
-              title="Are you sure to Change request Status"
-              onConfirm={() => this.handleRequest(record)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button type="primary">
-                Activate{' '}
-                {loading && (
-                  <FontAwesomeIcon
-                    icon={faSpinner}
-                    size="sm"
-                    color="#fff"
-                    className="ml-2"
-                  />
-                )}
-              </Button>
-            </Popconfirm>
-          </span>
-        ),
-      },
     ];
 
     return (
@@ -276,7 +245,7 @@ class DataTable extends Component {
         <div className="dashboard-card">
           <div className="dashboard-card-header mb-3 d-flex">
             <div className="row mb-3">
-              <span className="modal-title">All Requests </span>
+              <span className="modal-title">All Data </span>
               <span>({num})</span>
             </div>
           </div>
@@ -308,17 +277,8 @@ const mapStateToProps = ({ requests }) => {
         rowNum: index + 1,
         createdOn: obj.dateCreated.substr(0, 10),
       }))
-      .filter(
-        (request) =>
-          (request.product === 'pads' || request.product === 'condoms') &&
-          request.status === 0
-      )
       .reverse(),
-    num: Object.values(requests).filter(
-      (request) =>
-        (request.product === 'pads' || request.product === 'condoms') &&
-        request.status === 0
-    ).length,
+    num: Object.values(requests).length,
   };
 };
 

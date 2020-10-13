@@ -20,6 +20,12 @@ export const AllRoutes = [
     goTo: '/dashboard',
   },
   {
+    activeRoute: 'data',
+    icon: faLayerGroup,
+    label: 'Data',
+    goTo: '/dashboard/data',
+  },
+  {
     activeRoute: 'requests',
     icon: faLayerGroup,
     label: 'Requests',

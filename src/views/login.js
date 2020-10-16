@@ -31,22 +31,20 @@ class Login extends Component {
   };
 
   handleFormSubmit = () => {
-    //   TODO: Authenticate
-    this.props.history.push('/dashboard');
-    // const { data, response } = this.checkValidation();
-    // if (response) {
-    //   data.MSISDN = '+25' + data.MSISDN;
-    //   this.setState({ loading: true, errorMessage: '' });
-    //   this.props.dispatch(handleUserLogin(data)).then((res) => {
-    //     this.setState({ loading: false });
+    const { data, response } = this.checkValidation();
+    if (response) {
+      data.MSISDN = '+25' + data.MSISDN;
+      this.setState({ loading: true, errorMessage: '' });
+      this.props.dispatch(handleUserLogin(data)).then((res) => {
+        this.setState({ loading: false });
 
-    //     if (res.type !== 'LOG_ERROR') {
-    //       return (window.location.href = this.props.link || '/dashboard');
-    //     } else {
-    //       this.setState({ errorMessage: res.error });
-    //     }
-    //   });
-    // }
+        if (res.type !== 'LOG_ERROR') {
+          return (window.location.href = this.props.link || '/dashboard');
+        } else {
+          this.setState({ errorMessage: res.error });
+        }
+      });
+    }
   };
 
   checkValidation = () => {
@@ -100,7 +98,7 @@ class Login extends Component {
                 <div className="row mb-3 justify-content-center flex-column align-items-center">
                   <div>
                     <img
-                      src={require('../assets/main-logo.png')}
+                      src={require('../assets/main-logo.jpg')}
                       alt="Church Services"
                       className="login-logo"
                     />

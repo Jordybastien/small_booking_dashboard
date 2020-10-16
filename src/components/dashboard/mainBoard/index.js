@@ -43,7 +43,7 @@ const MainBoard = (props) => {
                 <FontAwesomeIcon
                   icon={faLayerGroup}
                   size="3x"
-                  color="#5C4DB1"
+                  color="#32662b"
                   className="mr-2"
                 />
               </div>
@@ -61,7 +61,7 @@ const MainBoard = (props) => {
                 <FontAwesomeIcon
                   icon={faLayerGroup}
                   size="3x"
-                  color="#5C4DB1"
+                  color="#32662b"
                   className="mr-2"
                 />
               </div>

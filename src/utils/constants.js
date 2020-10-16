@@ -1,6 +1,6 @@
 import {
   faCog,
-  faUsers,
+  faUser,
   faLayerGroup,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -30,5 +30,11 @@ export const AllRoutes = [
     icon: faLayerGroup,
     label: 'Requests',
     goTo: '/dashboard/requests',
+  },
+  {
+    activeRoute: 'add-user',
+    icon: faUser,
+    label: 'Add User',
+    goTo: '/dashboard/add-user',
   },
 ];

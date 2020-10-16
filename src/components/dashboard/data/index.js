@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Button } from 'antd';
+import { Table, Button, DatePicker } from 'antd';
 import { connect } from 'react-redux';
 import Select from 'react-select';
 import { exportToCsv, exportPDF } from '../../../utils/fileGenerator';
@@ -10,6 +10,8 @@ const options = [
   { value: 'excel', label: 'Excel' },
 ];
 
+const dateFormat = 'YYYY/MM/DD';
+
 class DataTable extends Component {
   state = {
     filteredInfo: null,
@@ -18,6 +20,8 @@ class DataTable extends Component {
     selectedOption: null,
     minAge: '',
     maxAge: '',
+    fromDate: null,
+    toDate: null,
   };
 
   handleChange = (pagination, filters, sorter) => {
@@ -39,7 +43,7 @@ class DataTable extends Component {
 
     if (selectedOption.value === 'pdf') {
       const title = 'Requests';
-      const headers = [['#', 'Product', 'Gender', 'Age', 'In Kigeme']];
+      const headers = [['#', 'Product', 'Gender', 'Age', 'In Kigeme', 'Phone']];
 
       const data = this.state.requests.map((elt) => [
         elt.rowNum,
@@ -47,11 +51,20 @@ class DataTable extends Component {
         elt.gender,
         elt.age,
         elt.inKigeme,
+        elt.MSISDN,
       ]);
       exportPDF(title, headers, data);
     } else {
       const CsvString = [];
-      CsvString.push(['\r\n', '#', 'Product', 'Gender', 'Age', 'In Kigeme']);
+      CsvString.push([
+        '\r\n',
+        '#',
+        'Product',
+        'Gender',
+        'Age',
+        'In Kigeme',
+        'Phone',
+      ]);
 
       this.state.requests.map((elt) =>
         CsvString.push('\r\n', [
@@ -60,6 +73,7 @@ class DataTable extends Component {
           elt.gender,
           elt.age,
           elt.inKigeme,
+          elt.MSISDN,
         ])
       );
       exportToCsv(CsvString);
@@ -97,8 +111,32 @@ class DataTable extends Component {
     });
   };
 
+  handleFilterDate = () => {
+    const { requests, fromDate, toDate } = this.state;
+    this.setState({
+      requests: requests.filter(
+        (request) =>
+          request.dateCreated.split('T')[0] >= fromDate &&
+          request.dateCreated.split('T')[0] <= toDate
+      ),
+    });
+  };
+
+  handleBeforeDate = (selDate) =>
+    this.setState({ fromDate: moment(selDate._d).format('YYYY-MM-DD') });
+
+  handleToDate = (selDate) =>
+    this.setState({ toDate: moment(selDate._d).format('YYYY-MM-DD') });
+
   render() {
-    const { requests, selectedOption, minAge, maxAge } = this.state;
+    const {
+      requests,
+      selectedOption,
+      minAge,
+      maxAge,
+      fromDate,
+      toDate,
+    } = this.state;
 
     const { num } = this.props;
 
@@ -196,6 +234,11 @@ class DataTable extends Component {
         onFilter: (value, record) => record.inKigeme === value,
       },
       {
+        title: 'Phone',
+        dataIndex: 'MSISDN',
+        key: 'MSISDN',
+      },
+      {
         title: 'Requested On(Y/M/D)',
         dataIndex: 'createdOn',
         key: 'createdOn',
@@ -207,7 +250,7 @@ class DataTable extends Component {
 
     return (
       <div className="container">
-        <div className="row mb-3 mt-5">
+        <div className="row mb-3 mt-5 px-5">
           <div className="col-md-6">
             <input
               type="text"
@@ -231,6 +274,7 @@ class DataTable extends Component {
               Filter
             </Button>
           </div>
+
           <div className="col-md-6 select-container">
             <Select
               value={selectedOption}
@@ -242,11 +286,48 @@ class DataTable extends Component {
             />
           </div>
         </div>
+        <div className="row mb-3 justify-content-between px-5">
+          <div>
+            <DatePicker
+              format={dateFormat}
+              placeholder="Requests From"
+              onChange={this.handleBeforeDate}
+            />
+            <DatePicker
+              format={dateFormat}
+              placeholder="Requests To"
+              onChange={this.handleToDate}
+            />
+            <Button
+              type="primary"
+              onClick={this.handleFilterDate}
+              disabled={!fromDate || !toDate}
+              className="ml-4"
+            >
+              Filter
+            </Button>
+          </div>
+          <div>
+            <Button
+              type="primary"
+              onClick={() =>
+                this.setState({
+                  requests: this.props.requests,
+                  filteredInfo: null,
+                  sortedInfo: null,
+                })
+              }
+              className="ml-4"
+            >
+              Reset All
+            </Button>
+          </div>
+        </div>
         <div className="dashboard-card">
           <div className="dashboard-card-header mb-3 d-flex">
             <div className="row mb-3">
               <span className="modal-title">All Data </span>
-              <span>({num})</span>
+              <span>({requests.length})</span>
             </div>
           </div>
           <div className="row">

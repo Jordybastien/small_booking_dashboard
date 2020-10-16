@@ -4,6 +4,7 @@ import DashboardRoute from '../components/protectedRoute/dashboardRoute';
 import MainBoard from '../components/dashboard/mainBoard';
 import Data from '../components/dashboard/data';
 import Requests from '../components/dashboard/requests';
+import AddUser from '../components/dashboard/addUser';
 import { AllRoles } from '../utils/constants';
 
 const DashboardRouting = () => {
@@ -13,26 +14,7 @@ const DashboardRouting = () => {
       {/* Admin Routes */}
       <Route path="/dashboard/data" component={Data} />
       <Route path="/dashboard/requests" component={Requests} />
-      {/* <DashboardRoute
-        path="/dashboard/users"
-        component={StudentsComponent}
-        allowedRole={AllRoles.admin}
-      />
-      <DashboardRoute
-        path="/dashboard/quizes"
-        component={AllQuizesComponent}
-        allowedRole={AllRoles.admin}
-      />
-      <DashboardRoute
-        path="/dashboard/levels"
-        component={Levels}
-        allowedRole={AllRoles.admin}
-      />
-      <DashboardRoute
-        path="/dashboard/take-quiz"
-        component={TakeQuizComponent}
-        allowedRole={AllRoles.students}
-      /> */}
+      <Route path="/dashboard/add-user" component={AddUser} />
     </>
   );
 };

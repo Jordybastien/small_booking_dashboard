@@ -14,8 +14,8 @@ import { NavLink } from 'react-router-dom';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
 import DashboardRouting from '../router/dashboardRoutes';
 import { AllRoutes, AllRoles } from '../utils/constants';
-// import { logoutUser } from '../actions/authedUser';
-// import { tokenKey } from '../services/auth';
+import { logoutUser } from '../actions/authedUser';
+import { tokenKey } from '../services/auth';
 
 const SubMenu = Menu.SubMenu;
 
@@ -27,9 +27,9 @@ class Dashboard extends Component {
   };
 
   handleLogoutUser = () => {
-    // localStorage.removeItem(tokenKey);
-    // this.props.dispatch(logoutUser());
-    // this.props.history.push('/');
+    localStorage.removeItem(tokenKey);
+    this.props.dispatch(logoutUser());
+    this.props.history.push('/');
   };
 
   render() {
@@ -65,7 +65,7 @@ class Dashboard extends Component {
                             alt="avatar"
                           /> */}
                           <span className="override-menu-dashboard mr-2">
-                            {`${authedUser.stdFname} ${authedUser.stdLname}`}
+                            {authedUser.names}
                           </span>
                         </div>
                         <FontAwesomeIcon
@@ -102,7 +102,7 @@ class Dashboard extends Component {
           <div className="sidenav-container">
             <div className="dashboard-logo-container pl-4">
               <img
-                src={require('../assets/main-logo.png')}
+                src={require('../assets/main-logo.jpg')}
                 className="dashboard-logo show-cursor mb-5"
                 alt="Church Service"
                 onClick={() => this.props.history.push('/')}
@@ -110,112 +110,101 @@ class Dashboard extends Component {
             </div>
             <ul className="sidenav__list">
               {/* Beginnig*/}
-              {authedUser.type === AllRoles.admin &&
-                AllRoutes.map(
-                  ({ activeRoute, icon, label, goTo, children }) => (
-                    <li className="sidenav__list-item" key={activeRoute}>
-                      <NavLink
-                        to={!children && goTo}
-                        className="secondary-color"
-                      >
-                        <div
-                          className={
+              {AllRoutes.map(({ activeRoute, icon, label, goTo, children }) => (
+                <li className="sidenav__list-item" key={activeRoute}>
+                  <NavLink to={!children && goTo} className="secondary-color">
+                    <div
+                      className={
+                        this.state.activeRoute === activeRoute
+                          ? 'activeRoute'
+                          : 'sidebar-content'
+                      }
+                      onClick={() => {
+                        !children &&
+                          this.setState({
+                            activeRoute,
+                            showSideBar: false,
+                          });
+                        children &&
+                          this.setState({
+                            showChildren: !showChildren,
+                          });
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={icon}
+                        size="2x"
+                        color="#42495b"
+                        className={
+                          this.state.activeRoute === activeRoute
+                            ? 'activeColor'
+                            : 'sidebar-content-icon'
+                        }
+                      />
+                      <span className="h6 mx-3">{label}</span>
+                      {children && (
+                        <FontAwesomeIcon
+                          icon={faAngleRight}
+                          size="1x"
+                          color="#42495b"
+                          className={`children-carret ${
                             this.state.activeRoute === activeRoute
-                              ? 'activeRoute'
-                              : 'sidebar-content'
+                              ? 'activeColor'
+                              : 'sidebar-content-icon'
                           }
-                          onClick={() => {
-                            !children &&
-                              this.setState({
-                                activeRoute,
-                                showSideBar: false,
-                              });
-                            children &&
-                              this.setState({
-                                showChildren: !showChildren,
-                              });
-                          }}
-                        >
-                          <FontAwesomeIcon
-                            icon={icon}
-                            size="2x"
-                            color="#42495b"
-                            className={
-                              this.state.activeRoute === activeRoute
-                                ? 'activeColor'
-                                : 'sidebar-content-icon'
-                            }
-                          />
-                          <span className="h6 mx-3">{label}</span>
-                          {children && (
-                            <FontAwesomeIcon
-                              icon={faAngleRight}
-                              size="1x"
-                              color="#42495b"
-                              className={`children-carret ${
-                                this.state.activeRoute === activeRoute
-                                  ? 'activeColor'
-                                  : 'sidebar-content-icon'
-                              }
                               ${
                                 showChildren
                                   ? 'show-children-carret'
                                   : 'hide-children-carret'
                               }
                               `}
-                            />
-                          )}
-                        </div>
-                      </NavLink>
-                      {children && (
-                        <ul
-                          className={`sidenav__list pl-5 sidenav-list-children ${
-                            showChildren
-                              ? 'show-sidenav-list-children'
-                              : 'hide-sidenav-list-children'
-                          }`}
-                        >
-                          {children.map(
-                            ({ activeRoute, icon, label, goTo }) => (
-                              <li
-                                className="sidenav__list-item"
-                                key={activeRoute}
-                              >
-                                <NavLink to={goTo} className="secondary-color">
-                                  <div
-                                    className={
-                                      this.state.activeRoute === activeRoute
-                                        ? 'activeRoute'
-                                        : 'sidebar-content'
-                                    }
-                                    onClick={() =>
-                                      this.setState({
-                                        activeRoute,
-                                        showSideBar: false,
-                                      })
-                                    }
-                                  >
-                                    <FontAwesomeIcon
-                                      icon={icon}
-                                      size="2x"
-                                      color="#42495b"
-                                      className={
-                                        this.state.activeRoute === activeRoute
-                                          ? 'activeColor'
-                                          : 'sidebar-content-icon'
-                                      }
-                                    />
-                                    <span className="h6 ml-3">{label}</span>
-                                  </div>
-                                </NavLink>
-                              </li>
-                            )
-                          )}
-                        </ul>
+                        />
                       )}
-                    </li>
-                  )
-                )}
+                    </div>
+                  </NavLink>
+                  {children && (
+                    <ul
+                      className={`sidenav__list pl-5 sidenav-list-children ${
+                        showChildren
+                          ? 'show-sidenav-list-children'
+                          : 'hide-sidenav-list-children'
+                      }`}
+                    >
+                      {children.map(({ activeRoute, icon, label, goTo }) => (
+                        <li className="sidenav__list-item" key={activeRoute}>
+                          <NavLink to={goTo} className="secondary-color">
+                            <div
+                              className={
+                                this.state.activeRoute === activeRoute
+                                  ? 'activeRoute'
+                                  : 'sidebar-content'
+                              }
+                              onClick={() =>
+                                this.setState({
+                                  activeRoute,
+                                  showSideBar: false,
+                                })
+                              }
+                            >
+                              <FontAwesomeIcon
+                                icon={icon}
+                                size="2x"
+                                color="#42495b"
+                                className={
+                                  this.state.activeRoute === activeRoute
+                                    ? 'activeColor'
+                                    : 'sidebar-content-icon'
+                                }
+                              />
+                              <span className="h6 ml-3">{label}</span>
+                            </div>
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
               {/* End */}
             </ul>
             <div className="dashboard-logout-container br-top pt-4">
@@ -253,8 +242,7 @@ class Dashboard extends Component {
 
 const mapStateToProps = ({ authedUser }) => {
   return {
-    //   TODO: Remove this
-    authedUser: { stdFname: 'Test', stdLname: 'App', type: 'admin' },
+    authedUser,
   };
 };
 

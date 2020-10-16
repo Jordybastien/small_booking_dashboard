@@ -23,8 +23,7 @@ const Routing = () => {
       <Router>
         <Switch>
           <Route path="/" exact component={Login} />
-          {/* TODO: Protect Dashboard */}
-          <Route path="/dashboard" component={Dashboard} />
+          <ProtectedRoute path="/dashboard" component={Dashboard} />
           <Route path="/login" component={Login} />
           <Route component={NotFound} />
         </Switch>

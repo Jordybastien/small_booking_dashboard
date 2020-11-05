@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Table, Button, DatePicker } from 'antd';
+import { Table, Button, DatePicker, Tag } from 'antd';
 import { connect } from 'react-redux';
 import Select from 'react-select';
 import { exportToCsv, exportPDF } from '../../../utils/fileGenerator';
 import moment from 'moment';
+import { filter } from 'lodash';
 
 const options = [
   { value: 'pdf', label: 'PDF' },
@@ -29,11 +30,29 @@ class DataTable extends Component {
       filteredInfo: filters,
       sortedInfo: sorter,
     });
-
+    
     filters.product &&
       this.setState({
-        requests: this.props.requests.filter(
+        requests: this.state.requests.filter(
           (request) => request.product === filters.product[0]
+        ),
+      });
+    filters.gender &&
+      this.setState({
+        requests: this.state.requests.filter(
+          (request) => request.gender === filters.gender[0]
+        ),
+      });
+    filters.inKigeme &&
+      this.setState({
+        requests: this.state.requests.filter(
+          (request) => request.inKigeme === filters.inKigeme[0]
+        ),
+      });
+    filters.status &&
+      this.setState({
+        requests: this.state.requests.filter(
+          (request) => request.status === filters.status[0]
         ),
       });
   };
@@ -142,7 +161,7 @@ class DataTable extends Component {
 
     let { sortedInfo } = this.state;
     sortedInfo = sortedInfo || {};
-
+    
     const columns = [
       {
         title: '#',
@@ -245,6 +264,53 @@ class DataTable extends Component {
         sorter: (a, b) => new Date(a.createdOn) - new Date(b.createdOn),
         sortOrder: sortedInfo.columnKey === 'createdOn' && sortedInfo.order,
         ellipsis: true,
+      },
+      {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        render: (status) => {
+          switch (status) {
+            case 0:
+              return (
+                <Tag color="geekblue" key={status}>
+                  Pending
+                </Tag>
+              );
+
+            case 1:
+              return (
+                <Tag color="green" key={status}>
+                  Approved
+                </Tag>
+              );
+
+            case 1:
+              return (
+                <Tag color="volcano" key={status}>
+                  Rejected
+                </Tag>
+              );
+
+            default:
+              break;
+          }
+        },
+        filters: [
+          {
+            text: 'Pending',
+            value: 0,
+          },
+          {
+            text: 'Approved',
+            value: 1,
+          },
+          {
+            text: 'Rejected',
+            value: 2,
+          },
+        ],
+        onFilter: (value, record) => record.status === value,
       },
     ];
 

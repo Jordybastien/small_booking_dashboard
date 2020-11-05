@@ -39,7 +39,8 @@ class Login extends Component {
         this.setState({ loading: false });
 
         if (res.type !== 'LOG_ERROR') {
-          return (window.location.href = this.props.link || '/dashboard');
+          // return (window.location.href = this.props.link || '/dashboard');
+          return true;
         } else {
           this.setState({ errorMessage: res.error });
         }

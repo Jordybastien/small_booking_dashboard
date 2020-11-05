@@ -37,8 +37,20 @@ class DataTable extends Component {
     });
     filters.product &&
       this.setState({
-        requests: this.props.requests.filter(
+        requests: this.state.requests.filter(
           (request) => request.product === filters.product[0]
+        ),
+      });
+    filters.gender &&
+      this.setState({
+        requests: this.state.requests.filter(
+          (request) => request.gender === filters.gender[0]
+        ),
+      });
+    filters.inKigeme &&
+      this.setState({
+        requests: this.state.requests.filter(
+          (request) => request.inKigeme === filters.inKigeme[0]
         ),
       });
   };

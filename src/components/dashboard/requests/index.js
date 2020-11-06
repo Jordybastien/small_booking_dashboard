@@ -53,6 +53,12 @@ class DataTable extends Component {
           (request) => request.inKigeme === filters.inKigeme[0]
         ),
       });
+    filters.lang &&
+      this.setState({
+        requests: this.state.requests.filter(
+          (request) => request.lang === filters.lang[0]
+        ),
+      });
   };
 
   handleSelect = (selectedOption) => {
@@ -60,7 +66,9 @@ class DataTable extends Component {
 
     if (selectedOption.value === 'pdf') {
       const title = 'Requests';
-      const headers = [['#', 'Product', 'Gender', 'Age', 'In Kigeme', 'Phone']];
+      const headers = [
+        ['#', 'Product', 'Gender', 'Age', 'In Kigeme', 'Phone', 'Language'],
+      ];
 
       const data = this.state.requests.map((elt) => [
         elt.rowNum,
@@ -69,6 +77,7 @@ class DataTable extends Component {
         elt.age,
         elt.inKigeme,
         elt.MSISDN,
+        elt.lang === 'en' ? 'English' : 'Kinyarwanda',
       ]);
       exportPDF(title, headers, data);
     } else {
@@ -81,6 +90,7 @@ class DataTable extends Component {
         'Age',
         'In Kigeme',
         'Phone',
+        'Language',
       ]);
 
       this.state.requests.map((elt) =>
@@ -91,6 +101,7 @@ class DataTable extends Component {
           elt.age,
           elt.inKigeme,
           elt.MSISDN,
+          elt.lang === 'en' ? 'English' : 'Kinyarwanda',
         ])
       );
       exportToCsv(CsvString);
@@ -273,6 +284,34 @@ class DataTable extends Component {
         sorter: (a, b) => new Date(a.createdOn) - new Date(b.createdOn),
         sortOrder: sortedInfo.columnKey === 'createdOn' && sortedInfo.order,
         ellipsis: true,
+      },
+      {
+        title: 'Language',
+        dataIndex: 'lang',
+        key: 'lang',
+        render: (lang) => {
+          switch (lang) {
+            case 'rw':
+              return <span>Kinyarwanda</span>;
+
+            case 'en':
+              return <span>English</span>;
+
+            default:
+              break;
+          }
+        },
+        filters: [
+          {
+            text: 'Kinyarwanda',
+            value: 'rw',
+          },
+          {
+            text: 'English',
+            value: 'en',
+          },
+        ],
+        onFilter: (value, record) => record.lang === value,
       },
       {
         title: 'Action',

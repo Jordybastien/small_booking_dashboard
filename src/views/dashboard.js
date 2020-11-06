@@ -231,7 +231,7 @@ class Dashboard extends Component {
         <footer className="footer dashboard-footer">
           <div className="footer__signature">
             <span className="h6 secondary-color">
-              COPYRIGHT {new Date().getFullYear()}{' '}
+              COPYRIGHT RVCP {new Date().getFullYear()}{' '}
             </span>
           </div>
         </footer>

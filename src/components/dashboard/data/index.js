@@ -30,7 +30,7 @@ class DataTable extends Component {
       filteredInfo: filters,
       sortedInfo: sorter,
     });
-    
+
     filters.product &&
       this.setState({
         requests: this.state.requests.filter(
@@ -49,10 +49,17 @@ class DataTable extends Component {
           (request) => request.inKigeme === filters.inKigeme[0]
         ),
       });
+      
     filters.status &&
       this.setState({
         requests: this.state.requests.filter(
-          (request) => request.status === filters.status[0]
+          (request) => request.status === parseInt(filters.status[0])
+        ),
+      });
+    filters.lang &&
+      this.setState({
+        requests: this.state.requests.filter(
+          (request) => request.lang === filters.lang[0]
         ),
       });
   };
@@ -62,7 +69,18 @@ class DataTable extends Component {
 
     if (selectedOption.value === 'pdf') {
       const title = 'Requests';
-      const headers = [['#', 'Product', 'Gender', 'Age', 'In Kigeme', 'Phone']];
+      const headers = [
+        [
+          '#',
+          'Product',
+          'Gender',
+          'Age',
+          'In Kigeme',
+          'Phone',
+          'Language',
+          'Status',
+        ],
+      ];
 
       const data = this.state.requests.map((elt) => [
         elt.rowNum,
@@ -71,6 +89,10 @@ class DataTable extends Component {
         elt.age,
         elt.inKigeme,
         elt.MSISDN,
+        elt.lang === 'en' ? 'English' : 'Kinyarwanda',
+        elt.status === 0 && 'Pending',
+        elt.status === 1 && 'Approved',
+        elt.status === 2 && 'Rejected',
       ]);
       exportPDF(title, headers, data);
     } else {
@@ -83,6 +105,8 @@ class DataTable extends Component {
         'Age',
         'In Kigeme',
         'Phone',
+        'Language',
+        'Status',
       ]);
 
       this.state.requests.map((elt) =>
@@ -93,6 +117,10 @@ class DataTable extends Component {
           elt.age,
           elt.inKigeme,
           elt.MSISDN,
+          elt.lang === 'en' ? 'English' : 'Kinyarwanda',
+          elt.status === 0 && 'Pending',
+          elt.status === 1 && 'Approved',
+          elt.status === 2 && 'Rejected',
         ])
       );
       exportToCsv(CsvString);
@@ -161,7 +189,7 @@ class DataTable extends Component {
 
     let { sortedInfo } = this.state;
     sortedInfo = sortedInfo || {};
-    
+
     const columns = [
       {
         title: '#',
@@ -170,7 +198,7 @@ class DataTable extends Component {
         sorter: (a, b) => a.rowNum - b.rowNum,
         sortOrder: sortedInfo.columnKey === 'rowNum' && sortedInfo.order,
         ellipsis: true,
-        width: 50,
+        width: 100,
       },
       {
         title: 'Product',
@@ -285,7 +313,7 @@ class DataTable extends Component {
                 </Tag>
               );
 
-            case 1:
+            case 2:
               return (
                 <Tag color="volcano" key={status}>
                   Rejected
@@ -311,6 +339,34 @@ class DataTable extends Component {
           },
         ],
         onFilter: (value, record) => record.status === value,
+      },
+      {
+        title: 'Language',
+        dataIndex: 'lang',
+        key: 'lang',
+        render: (lang) => {
+          switch (lang) {
+            case 'rw':
+              return <span>Kinyarwanda</span>;
+
+            case 'en':
+              return <span>English</span>;
+
+            default:
+              break;
+          }
+        },
+        filters: [
+          {
+            text: 'Kinyarwanda',
+            value: 'rw',
+          },
+          {
+            text: 'English',
+            value: 'en',
+          },
+        ],
+        onFilter: (value, record) => record.lang === value,
       },
     ];
 
